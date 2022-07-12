@@ -172,7 +172,7 @@ class Caisse{
 	}
 	
 	public void totalCaisse() {
-		String chaine = "La caisse " + numero + " a encaisse "+ montantTotal + " Frs aujourd'hui.";
+		String chaine = "La caisse " + numero + " a encaisse " + montantTotal + " Frs aujourd'hui.";
 		
 		System.out.println(chaine);
 	}
