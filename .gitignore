@@ -1,3 +1,11 @@
 Week01/bin/*
 Week01/.project
 Week01/.classpath
+Week01/.gitignore
+Week01/.settings/*
+Week02/bin/* 
+Week02/.project
+Week02/.classpath
+Week02/.gitignore
+Week02/.settings/*
+
