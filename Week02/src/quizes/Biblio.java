@@ -1,3 +1,4 @@
+package quizes;
 import java.util.ArrayList;
 
 class Auteur {
