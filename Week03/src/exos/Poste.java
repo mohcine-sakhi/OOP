@@ -57,7 +57,7 @@ class Boite {
 	}
 
 	public double affranchir() {
-		return courriers.stream().filter((courrier) -> courrier.estValide()).map((courrier) -> courrier.getPrix())
+		return courriers.stream().filter((courrier) -> courrier.estValide()).map((courrier) -> courrier.affranchir())
 				.mapToDouble(d -> d).sum();
 	}
 
@@ -99,7 +99,7 @@ abstract class Courrier {
 		System.out.println("\tPoids : " + getPoids() + " grammes");
 		System.out.println("\tExpress : " + (isModeExpedition() ? "oui" : "non"));
 		System.out.println("\tDestination : " + getAdresseDestination());
-		System.out.println("\tPrix : " + getPrix() + " CHF");
+		System.out.println("\tPrix : " + affranchir() + " CHF");
 	}
 
 	public boolean estValide() {
@@ -107,6 +107,18 @@ abstract class Courrier {
 	}
 
 	public abstract double getPrix();
+	
+	public double affranchir() {
+		if (! estValide()){
+			return 0;
+		}else{
+			double total = getPrix();
+			if (isModeExpedition()) {
+				total *= 2;
+			}
+				return total;
+			}
+		}
 
 }
 
@@ -129,19 +141,12 @@ class Lettre extends Courrier {
 	@Override
 	public double getPrix() {
 
-		if (!estValide()) {
-			return 0.0;
-		}
-
 		double montant = 0;
+		
 		if (getFormat().equals("A3")) {
 			montant = TARIF_DE_BASE_A3 + 1.0 * getPoids() / 1000;
 		} else {
 			montant = TARIF_DE_BASE_A4 + 1.0 * getPoids() / 1000;
-		}
-
-		if (isModeExpedition()) {
-			return 2 * montant;
 		}
 
 		return montant;
@@ -167,17 +172,7 @@ class Publicite extends Courrier {
 	@Override
 	public double getPrix() {
 
-		if (!estValide()) {
-			return 0.0;
-		}
-
-		double montant = 5.0 * getPoids() / 1000;
-
-		if (isModeExpedition()) {
-			return 2 * montant;
-		}
-
-		return montant;
+		return 5.0 * getPoids() / 1000;
 	}
 
 	@Override
@@ -206,17 +201,7 @@ class Colis extends Courrier {
 	@Override
 	public double getPrix() {
 
-		if (!estValide()) {
-			return 0.0;
-		}
-
-		double montant = 0.25 * getVolume() + 1.0 * getPoids() / 1000;
-
-		if (isModeExpedition()) {
-			return 2 * montant;
-		}
-
-		return montant;
+		return 0.25 * getVolume() + 1.0 * getPoids() / 1000;	
 	}
 
 	@Override
