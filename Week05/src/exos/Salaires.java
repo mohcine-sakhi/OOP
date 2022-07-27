@@ -10,7 +10,7 @@ public class Salaires {
 		p.ajouterEmploye(new Technicien("Yves", "Bosseur", 28, "1998", 1000));
 		p.ajouterEmploye(new Manutentionnaire("Jeanne", "Stocketout", 32, "1998", 45));
 		p.ajouterEmploye(new TechnARisque("Jean", "Flippe", 28, "2000", 1000));
-		p.ajouterEmploye(new ManutARisque("Al", "Abordage", 30, "2001", 45));
+		p.ajouterEmploye(new ManutARisque("Ali", "Abordage", 30, "2001", 45));
 
 		p.afficherSalaires();
 		System.out.println("Le salaire moyen dans l'entreprise est de " + p.salaireMoyen() + " francs.");
@@ -34,7 +34,7 @@ abstract class Employe {
 	public String getCategorie() {
 		return "L'employé ";
 	}
-	
+
 	public String getNom() {
 		return getCategorie() + prenom + " " + nom;
 	}
@@ -48,58 +48,72 @@ abstract class Employe {
 	}
 
 	public abstract double calculerSalaire();
-	
+
 	public void afficherSalaire() {
 		System.out.println(getNom() + "  gagne " + calculerSalaire() + " francs.");
 	}
 
 }
 
-class Vendeur extends Employe {
-	public static final double SALAIRE_DE_BASE = 400.0;
-
+/*
+ * ********************************************************************** La
+ * classe Commercial (regroupe Vendeur et Représentant)
+ **********************************************************************/
+abstract class Commerçant extends Employe {
 	private double chiffreAffaire;
 
-	public Vendeur(String nom, String prenom, int age, String dateEmbauche, double chiffreAffaire) {
-		super(nom, prenom, age, dateEmbauche);
+	public Commerçant(String prenom, String nom, int age, String date, double chiffreAffaire) {
+		super(prenom, nom, age, date);
 		this.chiffreAffaire = chiffreAffaire;
+	}
+
+	public double getChiffreAffaire() {
+		return chiffreAffaire;
+	}
+}
+
+class Vendeur extends Commerçant {
+	private final static double POURCENT_VENDEUR = 0.2;
+	private final static int BONUS_VENDEUR = 400;
+
+	public Vendeur(String nom, String prenom, int age, String dateEmbauche, double chiffreAffaire) {
+		super(nom, prenom, age, dateEmbauche, chiffreAffaire);
 	}
 
 	@Override
 	public double calculerSalaire() {
 
-		return 0.20 * chiffreAffaire + SALAIRE_DE_BASE;
+		return POURCENT_VENDEUR * getChiffreAffaire() + BONUS_VENDEUR;
 	}
-	
+
 	@Override
 	public String getCategorie() {
 		return "Le vendeur ";
 	}
 }
 
-class Representant extends Employe {
-	public static final double SALAIRE_DE_BASE = 800.0;
-
-	private double chiffreAffaire;
+class Representant extends Commerçant {
+	private final static double POURCENT_REPRESENTANT = 0.2;
+	private final static int BONUS_REPRESENTANT = 800;
 
 	public Representant(String nom, String prenom, int age, String dateEmbauche, double chiffreAffaire) {
-		super(nom, prenom, age, dateEmbauche);
-		this.chiffreAffaire = chiffreAffaire;
+		super(nom, prenom, age, dateEmbauche, chiffreAffaire);
 	}
-	
+
 	@Override
 	public double calculerSalaire() {
 
-		return 0.20 * chiffreAffaire + SALAIRE_DE_BASE;
+		return POURCENT_REPRESENTANT * getChiffreAffaire() + BONUS_REPRESENTANT;
 	}
-	
+
 	@Override
 	public String getCategorie() {
 		return "Le représentant ";
 	}
 }
 
-class Technicien extends Employe{
+class Technicien extends Employe {
+	public static final double PRIX_UNITE = 5.0;
 	private int nbUnitesProduites;
 
 	public Technicien(String nom, String prenom, int age, String dateEmbauche, int nbUnitesProduites) {
@@ -109,19 +123,20 @@ class Technicien extends Employe{
 
 	@Override
 	public double calculerSalaire() {
-		
-		return nbUnitesProduites * 5;
-	}	
-	
+
+		return nbUnitesProduites * PRIX_UNITE;
+	}
+
 	@Override
 	public String getCategorie() {
 		return "Le technicien ";
 	}
 }
 
-class Manutentionnaire extends Employe{
+class Manutentionnaire extends Employe {
+	public static final double TARIF_HORAIRE = 65.0;
 	private int nbHeuresDeTravail;
-	
+
 	public Manutentionnaire(String nom, String prenom, int age, String dateEmbauche, int nbHeuresDeTravail) {
 		super(nom, prenom, age, dateEmbauche);
 		this.nbHeuresDeTravail = nbHeuresDeTravail;
@@ -129,37 +144,38 @@ class Manutentionnaire extends Employe{
 
 	@Override
 	public double calculerSalaire() {
-		
-		return nbHeuresDeTravail * 65;
+
+		return nbHeuresDeTravail * TARIF_HORAIRE;
 	}
-	
+
 	@Override
 	public String getCategorie() {
 		return "Le manutentionnaire ";
 	}
 }
 
-interface ARisque{
+interface ARisque {
 	double PRIME_DE_RISQUE = 200.0;
+
 	default double primeDeRisque() {
 		return PRIME_DE_RISQUE;
 	}
 }
 
-class TechnARisque extends Technicien implements ARisque{
+class TechnARisque extends Technicien implements ARisque {
 
 	public TechnARisque(String nom, String prenom, int age, String dateEmbauche, int nbUnitesProduites) {
 		super(nom, prenom, age, dateEmbauche, nbUnitesProduites);
 	}
-	
+
 	@Override
 	public double calculerSalaire() {
-		
+
 		return super.calculerSalaire() + ARisque.super.primeDeRisque();
 	}
 }
 
-class ManutARisque extends Manutentionnaire implements ARisque{
+class ManutARisque extends Manutentionnaire implements ARisque {
 
 	public ManutARisque(String nom, String prenom, int age, String dateEmbauche, int nbHeuresDeTravail) {
 		super(nom, prenom, age, dateEmbauche, nbHeuresDeTravail);
@@ -167,42 +183,33 @@ class ManutARisque extends Manutentionnaire implements ARisque{
 
 	@Override
 	public double calculerSalaire() {
-		
+
 		return super.calculerSalaire() + ARisque.super.primeDeRisque();
 	}
 }
 
-class Personnel{
+class Personnel {
 	private ArrayList<Employe> employes;
-	
+
 	public Personnel() {
 		employes = new ArrayList<>();
 	}
-	
+
 	public void ajouterEmploye(Employe employe) {
-		if(employe != null) {
+		if (employe != null) {
 			employes.add(employe);
 		}
 	}
-	
+
 	public void afficherSalaires() {
 		employes.stream().forEach((employe) -> employe.afficherSalaire());
 	}
-	
+
 	public double salaireMoyen() {
-		if(employes.isEmpty()) {
+		if (employes.isEmpty()) {
 			return 0;
 		}
-		return employes.stream().map((employe) -> employe.calculerSalaire()).mapToDouble(d -> d).sum() / employes.size();
+		return employes.stream().map((employe) -> employe.calculerSalaire()).mapToDouble(d -> d).sum()
+				/ employes.size();
 	}
 }
-
-
-
-
-
-
-
-
-
-
